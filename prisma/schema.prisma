@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,25 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model SupportRole {
-  id    Int               @id @default(autoincrement())
-  name  String            @unique
-  users UserSupportRole[]
+model Role {
+  id       Int        @id @default(autoincrement())
+  role     String     @unique
+  UserRole UserRole[]
+
+  @@unique([id, role])
 }
 
 model User {
-  id           Int               @id @default(autoincrement())
+  id           String            @id @default(cuid())
   email        String            @unique
-  password     String // Add the password field
-  createdAt    DateTime          @default(now()) // Add the createdAt field
-  updatedAt    DateTime          @updatedAt // Add the updatedAt field
+  password     String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
   transactions UserTransaction[]
-  roles        UserSupportRole? // Add this field to represent the roles assigned to the user
+  roles        UserRole[]        // Changed to array to represent multiple roles assigned to the user
 }
 
 model UserTransaction {
-  recordId                  Int                            @default(autoincrement())
-  userId                    Int
+  recordId                  Int                            @id @default(autoincrement())
+  userId                    String
   categoryId                Int
   categoryName              String
   amount                    Int
@@ -39,12 +38,12 @@ model UserTransaction {
   expenseTransactionRecords UserExpenseTransactionRecord[]
   Category                  Category?                      @relation(fields: [categoryId, categoryName], references: [id, name])
 
-  @@id([recordId, userId, categoryId]) // Composite PK
+  @@unique([recordId, userId, categoryId])
 }
 
 model UserIncomeTransactionRecord {
   recordId        Int
-  userId          Int
+  userId          String
   categoryId      Int
   categoryName    String
   amount          Int
@@ -52,12 +51,12 @@ model UserIncomeTransactionRecord {
   transaction     UserTransaction @relation(fields: [recordId, userId, categoryId], references: [recordId, userId, categoryId])
   Category        Category?       @relation(fields: [categoryId, categoryName], references: [id, name])
 
-  @@id([recordId, userId, categoryId])
+  @@unique([recordId, userId, categoryId])
 }
 
 model UserExpenseTransactionRecord {
   recordId        Int
-  userId          Int
+  userId          String
   categoryId      Int
   categoryName    String
   amount          Int
@@ -65,21 +64,21 @@ model UserExpenseTransactionRecord {
   transaction     UserTransaction @relation(fields: [recordId, userId, categoryId], references: [recordId, userId, categoryId])
   Category        Category?       @relation(fields: [categoryId, categoryName], references: [id, name])
 
-  @@id([recordId, userId, categoryId])
+  @@unique([recordId, userId, categoryId])
 }
 
-model UserSupportRole {
-  userId Int @unique
+model UserRole {
+  userId String
   roleId Int
-  user   User        @relation(fields: [userId], references: [id])
-  role   SupportRole @relation(fields: [roleId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
 
   @@id([userId, roleId])
 }
 
 model Category {
   id                        Int                            @id @default(autoincrement())
-  name                      String?
+  name                      String?                        @unique
   transaction               UserTransaction[]
   incomeTransactionRecords  UserIncomeTransactionRecord[]
   expenseTransactionRecords UserExpenseTransactionRecord[]
