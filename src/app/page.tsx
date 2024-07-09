@@ -8,7 +8,7 @@ export default function Home() {
 			<div className='text-blue-500 mx-4'>
 				Horizontally and Vertically Centered Element
 			</div>
-			<div className='text-red-500 mx-4'>
+			<div className='text-purple-500 mx-4'>
 				Horizontally and Vertically Centered Element
 			</div>
 			<div className='text-green-500 mx-4'>
