@@ -4,7 +4,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    if: github.event_name != 'push'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,12 +20,13 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t xuehuang/bookkeeper .
+          docker build --build-arg NODE_ENV=production -t xuehuang/bookkeeper .
           docker push xuehuang/bookkeeper
 
   deploy:
     needs: build-and-deploy
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -41,10 +42,22 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 - Pull Docker image
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            docker pull xuehuang/bookkeeper
-            docker stop $(docker ps -q)
-            docker run -d -p 3000:3000 xuehuang/bookkeeper
-          EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker pull xuehuang/bookkeeper"
+
+      - name: Deploy to EC2 - Stop running container
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker stop $(docker ps -q) || true"
+
+      - name: Deploy to EC2 - Remove stopped containers
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker rm $(docker ps -a -q) || true"
+
+      - name: Deploy to EC2 - Run new container
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker run -d -p 3000:3000 xuehuang/bookkeeper"
+
+      - name: Deploy to EC2 - Verify deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker ps -a"

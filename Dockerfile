@@ -7,8 +7,13 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm install
 
+COPY .env.local .env.production ./
+
 # Copy the rest of the application code
 COPY . .
+
+# Run tests
+RUN npm test --passWithNoTests
 
 # Build the Next.js application
 RUN npm run build

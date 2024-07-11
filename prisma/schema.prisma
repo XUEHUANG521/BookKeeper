@@ -7,14 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Role {
-  id       Int        @id @default(autoincrement())
-  role     String     @unique
-  UserRole UserRole[]
-
-  @@unique([id, role])
-}
-
 model User {
   id           String            @id @default(cuid())
   email        String            @unique
@@ -22,66 +14,63 @@ model User {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   transactions UserTransaction[]
-  roles        UserRole[]        // Changed to array to represent multiple roles assigned to the user
+  roles        UserRole[]
+  budgets      Budget[]
 }
 
 model UserTransaction {
-  recordId                  Int                            @id @default(autoincrement())
-  userId                    String
-  categoryId                Int
-  categoryName              String
-  amount                    Int
-  transactionTime           DateTime
-  createdAt                 DateTime                       @default(now())
-  user                      User                           @relation(fields: [userId], references: [id])
-  incomeTransactionRecords  UserIncomeTransactionRecord[]
-  expenseTransactionRecords UserExpenseTransactionRecord[]
-  Category                  Category?                      @relation(fields: [categoryId, categoryName], references: [id, name])
+  id             Int       @id @default(autoincrement())
+  userId         String
+  categoryId     Int
+  amount         Int
+  transactionTime DateTime
+  type           TransactionType
+  createdAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id])
+  category       Category @relation(fields: [categoryId], references: [id])
 
-  @@unique([recordId, userId, categoryId])
+  @@index([userId])
+  @@index([categoryId])
+  @@index([transactionTime])
 }
 
-model UserIncomeTransactionRecord {
-  recordId        Int
-  userId          String
-  categoryId      Int
-  categoryName    String
-  amount          Int
-  transactionTime DateTime
-  transaction     UserTransaction @relation(fields: [recordId, userId, categoryId], references: [recordId, userId, categoryId])
-  Category        Category?       @relation(fields: [categoryId, categoryName], references: [id, name])
-
-  @@unique([recordId, userId, categoryId])
+model Category {
+  id          Int               @id @default(autoincrement())
+  name        String            @unique
+  transactions UserTransaction[]
+  budgets      Budget[]
 }
 
-model UserExpenseTransactionRecord {
-  recordId        Int
-  userId          String
-  categoryId      Int
-  categoryName    String
-  amount          Int
-  transactionTime DateTime
-  transaction     UserTransaction @relation(fields: [recordId, userId, categoryId], references: [recordId, userId, categoryId])
-  Category        Category?       @relation(fields: [categoryId, categoryName], references: [id, name])
+model Budget {
+  id          Int       @id @default(autoincrement())
+  amount      Int
+  startDate   DateTime
+  endDate     DateTime
+  userId      String
+  categoryId  Int
+  user        User      @relation(fields: [userId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
 
-  @@unique([recordId, userId, categoryId])
+  @@index([userId])
+  @@index([categoryId])
+}
+
+model Role {
+  id       Int        @id @default(autoincrement())
+  role     String     @unique
+  userRoles UserRole[]
 }
 
 model UserRole {
   userId String
   roleId Int
-  user   User   @relation(fields: [userId], references: [id])
-  role   Role   @relation(fields: [roleId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+  role   Role @relation(fields: [roleId], references: [id])
 
   @@id([userId, roleId])
 }
 
-model Category {
-  id                        Int                            @id @default(autoincrement())
-  name                      String?                        @unique
-  transaction               UserTransaction[]
-  incomeTransactionRecords  UserIncomeTransactionRecord[]
-  expenseTransactionRecords UserExpenseTransactionRecord[]
-
-  @@unique([id, name])
+enum TransactionType {
+  INCOME
+  EXPENSE
 }
