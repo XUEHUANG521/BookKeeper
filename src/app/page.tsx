@@ -1,18 +1,14 @@
+"use client";
+import withAuth from "./hoc/withAuth"
 import NavBar from "./components/NavBar"
-export default function Home() {
+const Home = function() {
   return (
 	<>
 	<NavBar/>
 	<div className="text-blue-500 w-100 h-100">
 		<section className='flex flex-row h-screen items-center justify-center pl-4 pr-4'>
-			<div className='text-blue-500 mx-4'>
-				Horizontally and Vertically Centered Element
-			</div>
-			<div className='text-purple-500 mx-4'>
-				Horizontally and Vertically Centered Element
-			</div>
-			<div className='text-green-500 mx-4'>
-				Horizontally and Vertically Centered Element
+			<div className='text-blue-800 text-3xl mx-4'>
+				Welcome to Book Keeper!
 			</div>
 		</section>
 	</div>
@@ -20,3 +16,5 @@ export default function Home() {
 	</>
   )
 }
+
+export default withAuth(Home)
