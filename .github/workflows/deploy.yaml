@@ -42,22 +42,14 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
 
+      - name: Deploy to EC2 - Stop existing container
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker ps --filter 'publish=3000' --format '{{.ID}}' | xargs -r docker stop | xargs -r docker rm"
+
       - name: Deploy to EC2 - Pull Docker image
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker pull xuehuang/bookkeeper"
 
-      - name: Deploy to EC2 - Stop running container
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker stop $(docker ps -q) || true"
-
-      - name: Deploy to EC2 - Remove stopped containers
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker rm $(docker ps -a -q) || true"
-
       - name: Deploy to EC2 - Run new container
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker run -d -p 3000:3000 xuehuang/bookkeeper"
-
-      - name: Deploy to EC2 - Verify deployment
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "docker ps -a"
