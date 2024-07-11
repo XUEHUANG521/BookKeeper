@@ -7,8 +7,6 @@ COPY package.json package-lock.json ./
 # Install dependencies
 RUN npm install
 
-COPY .env.local .env.production ./
-
 # Copy the rest of the application code
 COPY . .
 
