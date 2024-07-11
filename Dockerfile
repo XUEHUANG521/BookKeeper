@@ -10,6 +10,13 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
+# Set environment variables
+ARG DATABASE_URL
+ARG JWT_SECRET
+
+ENV DATABASE_URL=${DATABASE_URL}
+ENV JWT_SECRET=${JWT_SECRET}
+
 RUN npx prisma generate
 
 RUN npx prisma migrate deploy
