@@ -37,7 +37,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ token });
     } catch (error) {
       console.error('Error during registration:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error('Detailed error message:', error.message);
+      console.error('Error stack trace:', error.stack);
+      return res.status(500).json({ error: 'Internal server error', details: error.message });
     }
   } else {
     res.setHeader('Allow', ['POST']);
