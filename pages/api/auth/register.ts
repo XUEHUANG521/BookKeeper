@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      const token = jwt.sign({ email: user.email }, secret as string, { expiresIn: '1h' });
+      const token = jwt.sign({ username: user.username, email: user.email }, secret as string, { expiresIn: '1h' });
       return res.status(200).json({ token });
     } catch (error) {
       console.error('Error during registration:', error);
@@ -42,6 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Error stack trace:', error.stack);
         return res.status(500).json({ error: 'Internal server error', details: error.message });
       } else {
+        console.log('Unexpected error:', error);
         return res.status(500).json({ error: 'Internal server error' });
       }
     }
