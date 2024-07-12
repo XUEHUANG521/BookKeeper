@@ -10,16 +10,13 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Set environment variables
-ARG DATABASE_URL
-ARG JWT_SECRET
+ARG NODE_ENV
+ENV NODE_ENV=${NODE_ENV}
 
-ENV DATABASE_URL=${DATABASE_URL}
-ENV JWT_SECRET=${JWT_SECRET}
+RUN npm install -g dotenv-cli
 
-RUN npx prisma generate
-
-RUN npx prisma migrate deploy
+RUN dotenv -e .env.${NODE_ENV} -- npx prisma generate
+RUN dotenv -e .env.${NODE_ENV} -- npx prisma migrate deploy
 
 # Build the Next.js application
 RUN npm run build

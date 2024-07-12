@@ -7,7 +7,7 @@ const withAuth = (WrappedComponent: any) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const router = useRouter();
     useEffect(() => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         router.push("/auth/login");
       } else {

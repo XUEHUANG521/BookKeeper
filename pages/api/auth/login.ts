@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ email: user.email }, secret as string, { expiresIn: '1h' });
+      const token = jwt.sign({ username : user.username, email: user.email }, secret as string, { expiresIn: '1h' });
       return res.status(200).json({ token });
     } else {
       return res.status(401).json({ error: 'Invalid credentials' });

@@ -1,16 +1,12 @@
 // components/Navbar.js
-import Link from 'next/link';
+import useAuth from '../utis/hooks/useAuth';
 
 
 const Navbar = () => {
+	const username = useAuth();
 	return (
-		<nav className='flex flex-row justify-between text-white px-4 py-2 bg-gray-500 border-b-2'>
-			<div>
-				<Link href='/'>Home</Link>
-			</div>
-			<div>
-				<Link href='/about'>About</Link>
-			</div>
+		<nav className='flex justify-end text-white px-2 py-2 bg-gray-500 border-b-2'>
+			<div className='text-2xl px-2 py-2'><span>{username}</span></div>
 		</nav>
 	);
 };
