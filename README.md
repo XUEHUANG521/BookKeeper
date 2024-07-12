@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Bookkeeper
 
-## Getting Started
+Bookkeeper is a financial management application built with Next.js and Tailwind CSS.
 
-First, run the development server:
+## Table of Contents
 
-```bash
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [Building the Application](#building-the-application)
+- [Deployment](#deployment)
+- [Environment Variables](#environment-variables)
+- [Project Structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Introduction
+
+Bookkeeper is an easy-to-use financial management tool that allows users to manage and track their income and expenses.
+
+## Features
+
+- Frontend application built with Next.js
+- Styling with Tailwind CSS
+- User authentication and authorization
+- Database operations using Prisma
+
+## Installation
+
+First, clone the repository:
+
+git clone https://github.com/XUEHUANG521/bookkeeper.git
+cd bookkeeper
+
+Then, install the dependencies:
+
+npm install
+
+## Configuration
+
+Create a `.env.local` file and add the following environment variables:
+
+JWT_SECRET=your-jwt-secret
+DATABASE_URL=your-database-url
+
+Ensure the `tailwind.config.ts` and `postcss.config.js` file are correctly configured.
+
+## Running the Application
+
+Run the application in development mode:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+
+## Building the Application
+
+Build the application for production:
+
+npm run build
+npm start
+
+## Deployment
+
+### Prerequisites
+
+- AWS Account
+- Docker installed on your local machine
+- EC2 instance with Docker installed
+- GitHub repository with secrets configured
+
+### GitHub Actions Workflow
+
+This project uses GitHub Actions for CI/CD to automatically build and deploy the Docker image to an EC2 instance.
+
+#### Workflow Configuration
+
+Create a `.github/workflows/deploy.yml` file and configure the following secrets in your GitHub repository settings:
+
+- `DOCKER_HUB_USERNAME`: Your Docker Hub username
+- `DOCKER_HUB_PASSWORD`: Your Docker Hub password
+- `DATABASE_URL`: Your database connection URL
+- `JWT_SECRET`: Your JWT secret
+- `EC2_USER`: The SSH username for your EC2 instance
+- `EC2_HOST`: The public IP address or hostname of your EC2 instance
+- `EC2_KEY`: The private SSH key for accessing your EC2 instance (ensure this key is properly formatted)
+
+## Environment Variables
+
+Ensure the following environment variables are configured in the `.env.local` file before you run the project:
+
+JWT_SECRET=your-jwt-secret
+DATABASE_URL=your-database-url
+
+## Project Structure
+
+The main files and directory structure of the project are as follows:
+
+```
+project-root/
+├── pages/
+│   ├── auth/
+│   │   ├── login.tsx
+│   ├── ...
+├── src/
+│   ├── app/
+│   │   ├── components/
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── hoc/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── utils/
+├── tailwind.config.ts
+├── tsconfig.json
+├── package.json
+├── postcss.config.js
+├── ...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Contributing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Contributions are welcome! Please ensure that you run `npm run lint` to check the code style and run all tests before submitting your code.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project is licensed under the MIT License.
