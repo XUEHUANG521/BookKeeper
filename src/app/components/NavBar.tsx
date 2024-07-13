@@ -1,5 +1,5 @@
 // components/Navbar.js
-import useAuth from '../utis/hooks/useAuth';
+import useAuth from '../utils/hooks/useAuth';
 
 
 const Navbar = () => {
