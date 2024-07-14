@@ -1,4 +1,3 @@
-// pages/auth/login.js
 import { useState } from "react";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -8,6 +7,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,6 +16,7 @@ export default function Login() {
       sessionStorage.setItem("token", response.data.token);
       router.push("/");
     } catch (error) {
+      setError("Login failed. Please check your email and password.");
       console.error("Login failed:", error);
     }
   };
@@ -24,6 +25,7 @@ export default function Login() {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold mb-4">Login</h1>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="mb-4">
           <label className="block mb-2">Email</label>
           <input
